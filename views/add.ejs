@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Main</title>
+
+    <link type="text/css" href="css/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="app">
+      <form
+        action="/upload"
+        method="post"
+        style="
+          display: grid;
+          gap: 0.5rem;
+          grid-template-columns: auto 1fr;
+          max-width: 500px;
+          margin: 0 auto;
+        "
+        enctype="multipart/form-data">
+        <label for="file">File:</label>
+        <input type="file" id="file" name="file" required />
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" />
+        <button style="grid-column: span 2" type="submit" href="/">
+          Share
+        </button>
+      </form>
+
+      <div>
+        <a href="/">All Files</a>
+      </div>
+
+      <div>
+        <button id="delete-all-data-btn">Clear Database</button>
+      </div>
+    </div>
+    <script>
+      const deleteAllDataBtn = document.getElementById("delete-all-data-btn");
+
+      deleteAllDataBtn.addEventListener("click", async () => {
+        const password = prompt(
+          "Please enter your password to delete all data:"
+        );
+        const response = await fetch("/deleteAllData", {
+          method: "DELETE",
+          headers: { password },
+          body: JSON.stringify({ password }),
+        });
+        const result = await response.json();
+        alert(result.message);
+      });
+    </script>
+  </body>
+</html>

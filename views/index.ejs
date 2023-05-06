@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link type="text/css" href="css/styles.css" rel="stylesheet">
+  <title>All Files</title>
+</head>
+<body>
+  <h1>All Files</h1>
+  <a href="/add" > upload</a>
+  <ul>
+    <% files.forEach(file => { %>
+      <li>
+        <% if (file.type ==='image') { %>
+          <img  class="image" src="/file/<%= file.id %>" alt="Image">
+        <% } else if (file.type === 'text/plain') { %>
+          <img class="image" src="/icons/bg.jpg" alt="Text File">
+        <% } else if (file.type === 'application/pdf') { %>
+          <img class="image" src="/icons/pdf.png" alt="PDF">
+        <% } else if (file.type === 'file') { %>
+          <img class="image" src="/icons/bg.jpg" alt="Word Document">
+        <% } else if (file.type === 'application/vnd.ms-excel') { %>
+          <img class="image" src="/icons/excel.png" alt="Excel Spreadsheet">
+        <% } else { %>
+          <img class="image" src="./../icons/bg.jpg" alt="File">
+        <% } %>
+        <a href="/file/<%= file.id %>"><%= file.originalName %></a>
+        <% if (file.password != null) { %>
+          (password protected)
+        <% } %>
+        - <%= file.downloadCount %> downloads
+        - uploaded <%= file.uploadDate.toLocaleString() %>
+        - type of <%= file.type %>
+      </li>
+    <% }); %>
+  </ul>
+</body>
+</html>
