@@ -10,11 +10,11 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(express.static('public'));
 
-app.use(express.static('icons'));
+app.use('/favicon.ico', express.static('public'));
 
 const upload = multer({ dest: "uploads" })
 
-mongoose.connect(process.env.DATABASE)
+mongoose.connect(process.env.MONGO_URI)
 
 app.set("view engine", "ejs")
 
@@ -33,7 +33,6 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       originalName: req.file.originalname,
     };
   
-    // Determine the file type and set the type property accordingly
     if (req.file.mimetype.startsWith("image/")) {
       fileData.type = "image";
     } else if (req.file.mimetype.startsWith("text/")) {
@@ -47,12 +46,17 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     if (req.body.password != null && req.body.password !== "") {
       fileData.password = await bcrypt.hash(req.body.password, 10);
     }
+
+    if (req.body.name != null && req.body.name !== "") {
+      fileData.name = req.body.name
+    }
   
     const file = await File.create(fileData);
   
     res.redirect("/");
   });
   
+
 
 app.route("/file/:id").get(handleDownload).post(handleDownload)
 
@@ -69,22 +73,14 @@ async function handleDownload(req, res) {
       res.render("password", { error: true })
       return
     }
-
-    file.downloadCount++
-    await file.save()
-    res.download(file.path, file.originalName)
-
-    if (res.statusCode === 200) {
-      console.log("1")
-    }
-    
-  } else {
-    file.downloadCount++
-    await file.save()
-    res.download(file.path, file.originalName)
   }
+  
 
+  await file.save()
+
+  res.download(file.path, file.originalName)
 }
+
 const fs = require("fs");
 
 app.delete("/deleteAllData", async (req, res) => {
@@ -94,21 +90,21 @@ app.delete("/deleteAllData", async (req, res) => {
   }
 
   try {
-    // Delete all files from the "uploads" folder
     const files = fs.readdirSync("uploads");
     for (const file of files) {
       fs.unlinkSync(`uploads/${file}`);
     }
 
-    // Delete all files from the database
     await File.deleteMany({});
     await mongoose.connection.dropDatabase();
 
     res.status(200).json({ message: "All files and database cleared successfully." });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred while clearing all data." });
   }
+  
 });
 
   

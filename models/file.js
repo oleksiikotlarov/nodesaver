@@ -5,6 +5,10 @@ const FileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  name: {
+    type: String,
+    required: false,
+  },
   originalName: {
     type: String,
     required: true,
@@ -16,10 +20,6 @@ const FileSchema = new mongoose.Schema({
   password: {
     type: String,
     required: false,
-  },
-  downloadCount: {
-    type: Number,
-    default: 0,
   },
   uploadDate: {
     type: Date,

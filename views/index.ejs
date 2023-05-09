@@ -1,40 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link type="text/css" href="css/styles.css" rel="stylesheet">
-  <title>All Files</title>
-</head>
-<body>
-  <h1>All Files</h1>
-  <a href="/add" > upload</a>
-  <ul>
-    <% files.forEach(file => { %>
-      <li>
-        <% if (file.type ==='image') { %>
-          <img  class="image" src="/file/<%= file.id %>" alt="Image">
-        <% } else if (file.type === 'text/plain') { %>
-          <img class="image" src="/icons/bg.jpg" alt="Text File">
-        <% } else if (file.type === 'application/pdf') { %>
-          <img class="image" src="/icons/pdf.png" alt="PDF">
-        <% } else if (file.type === 'file') { %>
-          <img class="image" src="/icons/bg.jpg" alt="Word Document">
-        <% } else if (file.type === 'application/vnd.ms-excel') { %>
-          <img class="image" src="/icons/excel.png" alt="Excel Spreadsheet">
-        <% } else { %>
-          <img class="image" src="./../icons/bg.jpg" alt="File">
-        <% } %>
-        <a href="/file/<%= file.id %>"><%= file.originalName %></a>
-        <% if (file.password != null) { %>
-          (password protected)
-        <% } %>
-        - <%= file.downloadCount %> downloads
-        - uploaded <%= file.uploadDate.toLocaleString() %>
-        - type of <%= file.type %>
-      </li>
-    <% }); %>
-  </ul>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link type="text/css" href="css/styles.css" rel="stylesheet" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <title>Main</title>
+  </head>
+  <body>
+    <div>
+      <header>
+        <a class="nav-list__link--active" href="/">All Files</a>
+        <a href="/add"> Upload</a>
+        <a id="delete-all-data-btn">Clear Database</a>
+      </header>
+      <main>
+        <ul class="data_list">
+          <% files.forEach(file => { %>
+          <li>
+            <% if (file.password != null) { %>
+            <img
+              class="image"
+              src="https://static.vecteezy.com/system/resources/previews/000/581/808/original/lock-icon-vector-illustration.jpg"
+              alt="Image1" />
+            <% } else if (file.type === 'image') { %>
+            <img class="image" src="/file/<%= file.id %>" alt="Image" />
+            <% } else if (file.type === 'text') { %>
+            <img
+              class="image"
+              src="https://cdn-icons-png.flaticon.com/512/28/28878.png"
+              alt="Text File" />
+            <% } else if (file.type === 'application/pdf') { %>
+            <img
+              class="image"
+              src="https://play-lh.googleusercontent.com/C33HqYgilwnqGsoPlEh_WzAlZIF2YrAkkdef_YEsILWbxGIG4UCzNTxF7iq9bzdxPw"
+              alt="PDF" />
+            <% } else if (file.type === 'file') { %>
+            <img
+              class="image"
+              src="https://media.istockphoto.com/id/1209500169/vector/document-papers-line-icon-pages-vector-illustration-isolated-on-white-office-notes-outline.jpg?s=612x612&w=0&k=20&c=Dt2k6dEbHlogHilWPTkQXAUxAL9sKZnoO2e055ihMO0="
+              alt="Word Document" />
+            <% } else if (file.type === 'application/vnd.ms-excel') { %>
+            <img
+              class="image"
+              src="https://lh3.googleusercontent.com/3NxsKGNoTty7fXIv90VIgpaevPXwtrgY4QjyTYGajgXxI5PWEOJzOdiYJOpfM3QJFiBwS-REWC7Pzj_-YapaNuKvxkc=w128-h128-e365-rj-sc0x00ffffff"
+              alt="Excel Spreadsheet" />
+            <% } else { %>
+            <img
+              class="image"
+              src="https://cdn-icons-png.flaticon.com/512/6583/6583130.png"
+              alt="File" />
+            <% } %>
+
+            <a class="download btn" href="/file/<%= file.id %>">Download</a>
+            <p class="p1">
+              <% if (file.name != null) { %> <%= file.name %> <% } else { %> <%=
+              file.originalName %> <% } %>
+            </p>
+            <p>
+              <%= file.uploadDate.toLocaleString() %> - type of <%= file.type %>
+            </p>
+          </li>
+          <% }); %>
+        </ul>
+      </main>
+    </div>
+    <script>
+      const deleteAllDataBtn = document.getElementById("delete-all-data-btn");
+
+      deleteAllDataBtn.addEventListener("click", async () => {
+        const password = prompt(
+          "Please enter your password to delete all data:"
+        );
+        const response = await fetch("/deleteAllData", {
+          method: "DELETE",
+          headers: { password },
+          body: JSON.stringify({ password }),
+        });
+        const result = await response.json();
+        alert(result.message);
+      });
+    </script>
+  </body>
 </html>
